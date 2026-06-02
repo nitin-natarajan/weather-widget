@@ -1,0 +1,265 @@
+/* ── Reset ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #191919;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Widget ──────────────────────────────────────── */
+.widget {
+  width: 660px;
+  background: #191919;
+  padding: 20px 24px 20px;
+  color: #e0e0e0;
+}
+
+/* ── Top Row ─────────────────────────────────────── */
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+/* ── City Dropdown ───────────────────────────────── */
+.city-block { position: relative; min-width: 130px; }
+
+.city-dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.city-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #e0e0e0;
+  line-height: 1.2;
+  transition: color 0.15s;
+}
+
+.city-dropdown:hover .city-name { color: #ffffff; }
+
+/* subtle underline cue on hover */
+.city-name::after {
+  content: ' ▾';
+  font-size: 9px;
+  color: #555;
+  vertical-align: middle;
+  transition: color 0.15s;
+}
+.city-dropdown:hover .city-name::after { color: #999; }
+
+.city-sub {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: #555;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #242424;
+  border: 1px solid #2e2e2e;
+  border-radius: 4px;
+  padding: 4px 0;
+  min-width: 120px;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.city-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #666;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.dropdown-item:hover        { background: #2e2e2e; color: #ccc; }
+.dropdown-item.active       { color: #e0e0e0; }
+
+/* ── Current icon (center) ───────────────────────── */
+.current-icon-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.current-icon-wrap .weather-icon { font-size: 32px; line-height: 1; }
+
+/* ── Current temp (right) ────────────────────────── */
+.current-temp-wrap { text-align: right; min-width: 110px; }
+
+.cur-temp {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e8e8e8;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.cur-desc {
+  font-size: 10.5px;
+  color: #555;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* ── Divider ─────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: #2a2a2a;
+  margin-bottom: 18px;
+}
+
+/* ── Forecast Grid ───────────────────────────────── */
+.forecast {
+  display: flex;
+  justify-content: space-between;
+}
+
+.day-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  padding: 8px 4px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+/* Today highlight */
+.day-col.today {
+  background: #222222;
+}
+
+.day-col.today .day-name { color: #ffffff; }
+.day-col.today .day-high { color: #ffffff; }
+
+.day-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #c8c8c8;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.day-date {
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: #444;
+  margin-top: -7px;
+  line-height: 1;
+}
+
+/* ── Weather icon in forecast ────────────────────── */
+.day-icon {
+  font-size: 22px;
+  line-height: 1;
+  display: inline-block;
+}
+
+.day-temps { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.day-high  { font-size: 11.5px; font-weight: 600; color: #c8c8c8; }
+.day-low   { font-size: 10.5px; color: #444; }
+
+/* ── Fade transition ─────────────────────────────── */
+.forecast, .top-row { transition: opacity 0.16s ease; }
+.fading { opacity: 0 !important; }
+
+/* ═══════════════════════════════════════════════════
+   ANIMATED WEATHER ICONS
+   Each icon type gets its own keyframe animation.
+   Icons are rendered as <span> with a data-condition attr.
+   ═══════════════════════════════════════════════════ */
+
+/* Sunny — slow spin pulse */
+@keyframes sunny-spin {
+  0%   { transform: rotate(0deg)   scale(1);    filter: brightness(1); }
+  50%  { transform: rotate(180deg) scale(1.08); filter: brightness(1.15); }
+  100% { transform: rotate(360deg) scale(1);    filter: brightness(1); }
+}
+
+/* Partly cloudy — gentle float */
+@keyframes partly-float {
+  0%,100% { transform: translateX(0)   translateY(0); }
+  33%      { transform: translateX(2px) translateY(-2px); }
+  66%      { transform: translateX(-1px) translateY(1px); }
+}
+
+/* Cloudy — slow drift */
+@keyframes cloudy-drift {
+  0%,100% { transform: translateX(0); }
+  50%      { transform: translateX(4px); }
+}
+
+/* Rainy — bob + slight tilt */
+@keyframes rainy-bob {
+  0%,100% { transform: translateY(0)   rotate(0deg); }
+  40%      { transform: translateY(-3px) rotate(-3deg); }
+  80%      { transform: translateY(1px)  rotate(2deg); }
+}
+
+/* Stormy — shake */
+@keyframes stormy-shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-3px) rotate(-2deg); }
+  40%      { transform: translateX(3px)  rotate(2deg); }
+  60%      { transform: translateX(-2px); }
+  80%      { transform: translateX(2px); }
+}
+
+/* Snowy — float down wiggle */
+@keyframes snowy-float {
+  0%,100% { transform: translateY(0)   rotate(0deg); }
+  50%      { transform: translateY(-4px) rotate(10deg); }
+}
+
+/* Moon — gentle pulse glow */
+@keyframes moon-glow {
+  0%,100% { filter: brightness(1)    drop-shadow(0 0 0px #ffd700); }
+  50%      { filter: brightness(1.2)  drop-shadow(0 0 6px #ffd70066); }
+}
+
+/* Night clear — twinkle */
+@keyframes twinkle {
+  0%,100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(1.1); opacity: 0.85; }
+}
+
+/* Apply animations via data-condition */
+[data-condition="sunny"]         { animation: sunny-spin    8s linear infinite; }
+[data-condition="mostly-sunny"]  { animation: sunny-spin   10s linear infinite; }
+[data-condition="partly-cloudy"] { animation: partly-float  4s ease-in-out infinite; }
+[data-condition="cloudy"]        { animation: cloudy-drift  5s ease-in-out infinite; }
+[data-condition="overcast"]      { animation: cloudy-drift  6s ease-in-out infinite; }
+[data-condition="rainy"]         { animation: rainy-bob     3s ease-in-out infinite; }
+[data-condition="stormy"]        { animation: stormy-shake  1.4s ease-in-out infinite; }
+[data-condition="snowy"]         { animation: snowy-float   3s ease-in-out infinite; }
+[data-condition="moon"]          { animation: moon-glow     3s ease-in-out infinite; }
+[data-condition="night-clear"]   { animation: twinkle       2s ease-in-out infinite; }
+[data-condition="night-cloudy"]  { animation: partly-float  5s ease-in-out infinite; }
